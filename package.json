@@ -1,6 +1,6 @@
 {
   "name": "eventgames",
-  "version": "0.5",
+  "version": "0.5.0",
   "description": "eventgames",
   "main": "index.js",
   "directories": {

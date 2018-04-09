@@ -1,4 +1,6 @@
 class DiceGame extends GameRenderer {
+
+    private status : DiceGameStatus = DiceGameStatus.ready;
     private diceAnimationImage : AnimateImageObject;
     /**
      *  start event (start button click ) 
@@ -57,7 +59,7 @@ class DiceGame extends GameRenderer {
 
         this.angle += 0.05101;
 
-        if (this.isStart)
+        if (this.isStart && this.status == DiceGameStatus.ready)
         {
             c.fillStyle = "#535353";
             c.font = "bold 28px Nanum Gothic"
@@ -78,6 +80,8 @@ class DiceGame extends GameRenderer {
     {
         if (this.isStart == false)
             return;
+        if (this.status != DiceGameStatus.ready)
+            return;
         
         if (evt.offsetX >= this.startButton.x && 
             evt.offsetY > this.startButton.y && 
@@ -93,6 +97,7 @@ class DiceGame extends GameRenderer {
         this.diceAnimationImage.start();
         if (this.onStart)
             this.onStart();
+        this.status = DiceGameStatus.roll;
     }
 
     public setIndex(index:number)
@@ -101,9 +106,11 @@ class DiceGame extends GameRenderer {
 
         if (this.onEnd)
             this.onEnd();
+
+        this.status = DiceGameStatus.finish;
     }
 }
 
 enum DiceGameStatus {
-    ready, 
+    ready, roll, finish
 }
