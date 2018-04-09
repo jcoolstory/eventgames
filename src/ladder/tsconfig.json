@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "outDir": "dist",
+        "outFile": "../../dist/ladder.js"
+    }
+    ,"files": [
+        "../engine.ts","ladder.ts"
+    ]
+}

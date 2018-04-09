@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel='stylesheet' id='output-css'  href='style.css' type='text/css'>
+    <script src="roulette.js"></script>
+    
+</head>
+<body>    
+    <div id="roulette_container">
+        <img id="evt_roulette" src="./img/rouletteevent.png">
+        <canvas id="canvas" width="900", height = "900" style="position:absolute;top:22.3%;left:0%;transform-origin:0 0"></canvas>
+        <!-- <canvas id="canvas" width="900", height = "900" style="position:absolute;top:22.3%;left:0%;transform-origin:0 0;transform : scale(0.3)"></canvas> -->
+    </div>
+</body>
+<script>
+    var roulette = new RouletteGame;
+    var init = roulette.init({
+        "context" : "canvas",
+        "imageurl" : "./img/",
+        "buttonon" : "roulette_button_start.png",
+        "buttonoff" : "roulette_button_empty.png",
+        "isStart" : true,
+        "items" :  [
+                {"title":"적립금 10,000P",         "bgColor" : "#96dd61"},  //0
+                {"title":"할인쿠폰 3,000원",       "bgColor" : "#1f7dbd"},   //1
+                {"title":"할인쿠폰 5,000원",       "bgColor" : "#d35ef0"},   //2
+                {"title":"꽝!",                   "bgColor" : "#a21d22"},    //3
+                {"title":"적립금 500P",            "bgColor" : "#e8953d"}, //4
+                {"title":"적립금 1,000P",          "bgColor" : "#72b6e5"}, //5
+                ],
+        onStart : function(){
+            console.log("start");
+            /// test (실제 서버 데이타)
+            setTimeout(function(){
+                
+                receiveIndex();
+            },1000);
+        },
+        onEnd : function(index,items){
+            console.log(index, items[index]);
+        }
+    })
+    function receiveIndex(){
+        var select = parseInt(Math.random() * 6);
+        console.log("receive ", select);
+        roulette.setIndex(select);
+    }
+    roulette.start();
+</script>
+</html>

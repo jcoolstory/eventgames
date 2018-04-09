@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "outDir": "dist",
+        "outFile": "../../dist/dice.js"
+    }
+    ,"files": [
+        "../engine.ts","dice.ts"
+    ]
+}

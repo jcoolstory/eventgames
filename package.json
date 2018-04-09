@@ -1,0 +1,21 @@
+{
+  "name": "eventgames",
+  "version": "0.5",
+  "description": "eventgames",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",    
+    "ladder":"cd src/ladder && tsc",
+    "roulette":"cd src/roulette && tsc",
+    "dice":"cd src/dice && tsc",
+    "build" : "npm run ladder && npm run roulette && npm run dice"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^2.8.0-dev.20180302"
+  }
+}

@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "outDir": "dist",
+        "outFile": "../../dist/roulette.js"
+    }
+    ,"files": [
+        "../engine.ts","roulette.ts"
+    ]
+}
