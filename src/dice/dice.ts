@@ -2,6 +2,7 @@ class DiceGame extends GameRenderer {
 
     private status : DiceGameStatus = DiceGameStatus.ready;
     private diceAnimationImage : AnimateImageObject;
+    private diceFinishImage : ImageObject;
     /**
      *  start event (start button click ) 
      */
@@ -17,13 +18,35 @@ class DiceGame extends GameRenderer {
 
     private angle = 0;
 
+    private items : any = undefined;
+
+    private selectIndex = -1;
+    
     public init(config: Object) : boolean
     {
         super.init(config);
-        this.diceAnimationImage = new AnimateImageObject("./img/diceanimation.png", {x:500,y:500}, true, 0.5);
+        
         this.onStart = this.getParameter(config,"onStart", this.onStart);
         this.onEnd = this.getParameter(config,"onEnd", this.onEnd);
         this.isStart = this.getParameter(config,"isStart", this.isStart);
+        var imgUrlPrefix = "./img";
+        imgUrlPrefix = this.getParameter(config,"imageurl", imgUrlPrefix);
+        this.diceAnimationImage = new AnimateImageObject(imgUrlPrefix + "diceanimation.png", {x:500,y:500}, true, 0.5);
+        this.diceFinishImage = new ImageObject(imgUrlPrefix + "dice_finish.png");
+
+        // defulat items
+        const defaultItem = 
+        [
+            {"title":"적립금 10,000P",         "bgColor" : "blue"},
+            {"title":"할인쿠폰 3,000원",       "bgColor" : "#f07c25"},
+            {"title":"할인쿠폰 5,000원",       "bgColor" : "#a21d21"},
+            {"title":"꽝!",                   "bgColor" : "#1f7dbd"},
+            {"title":"적립금 500P",            "bgColor" : "#72b6e4"},
+            {"title":"적립금 1,000P",          "bgColor" : "#feebb9"},
+        ]
+        
+        // set config
+        this.items = this.getParameter(config,"items", defaultItem);        
         
         this.renderCollection.push({
             update: ()=>{
@@ -45,16 +68,44 @@ class DiceGame extends GameRenderer {
         this.startButton = startButton;
         return true;
     }
+
     private drawGame(c:GameCanvas) {
         if (this.diceAnimationImage.loaded)
         {
-            var rect =  this.diceAnimationImage.getCurrentImage();
-            var width = 350;
-            c.save();
-            c.translate(this.width/2, 20+width/2)
-            //c.rotate(this.angle);
-            c.drawImage(this.diceAnimationImage.Image,rect.x, rect.y,rect.width,rect.height, - width/2,-width/2,width,width);
-            c.restore();
+            switch (this.status)
+            {
+                case DiceGameStatus.ready:
+                
+                case DiceGameStatus.roll:
+                    var rect =  this.diceAnimationImage.getCurrentImage();
+                    var width = 350;
+                    c.save();
+                    c.translate(this.width/2, 20+width/2)
+                    //c.rotate(this.angle);
+                    c.drawImage(this.diceAnimationImage.Image,rect.x, rect.y,rect.width,rect.height, - width/2,-width/2,width,width);
+                    c.restore();
+                    break;
+                case DiceGameStatus.finish:
+                    var width = 350;
+                    c.save();
+                    c.translate(this.width/2, 20+width/2)
+                    c.drawImage(this.diceFinishImage.Image, - width/2,-width/2,width,width);
+                    
+                    c.font ="28px Nanum Ghothic"
+                    var region = {x:-90,y: -100,width:180, height:200}
+                    // c.beginPath();
+                    // c.moveTo(-400,0)
+                    // c.lineTo(400,0);
+                    // c.fillStyle = "red";
+                    // c.stroke();
+
+                    // c.fillRect(region.x,region.y,region.width,region.height)
+                    c.fillStyle = "white"
+                    GameUtil.drawTextRegion(c,this.items[this.selectIndex].title, region,"center","middle", 36);
+                    c.restore();
+                    break;
+            }
+            
         }
 
         this.angle += 0.05101;
@@ -73,7 +124,15 @@ class DiceGame extends GameRenderer {
     }
 
     public update(delayTime){
-        this.diceAnimationImage.update(delayTime);
+        switch(this.status)
+        {
+            case DiceGameStatus.roll:
+            this.diceAnimationImage.update(delayTime);
+            break;
+            case DiceGameStatus.finish:
+            this.stop();
+            break;
+        }
     }
 
     public mouseDown(evt:MouseEvent)
@@ -102,6 +161,7 @@ class DiceGame extends GameRenderer {
 
     public setIndex(index:number)
     {
+        this.selectIndex = index;
         this.diceAnimationImage.stop();
 
         if (this.onEnd)

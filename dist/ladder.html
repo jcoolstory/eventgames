@@ -20,14 +20,14 @@
     var ladderGame = new LadderGame;
     var init = ladderGame.init({
         "context" : "canvas",
-        "isStart" : false,
+        "isStart" : true,
         "items" : [
-            {"title":"적립금" ,    "value":"10,000P",         "color" : "#25284b"},  //0
-            {"title":"할인쿠폰" ,   "value":"3,000원",        "color" : "#25284b"},   //1
-            {"title":"할인쿠폰" ,   "value":"5,000원",        "color" : "#25284b"},   //2
-            {"title":"꽝!",        "value":"",                "color" : "#d34100"},    //3
-            {"title":"적립금 " ,   "value":"500P ",            "color" : "#25284b"}, //4
-            {"title":"적립금 " ,   "value":"1,000P",          "color" : "#25284b"}, //5
+            {"title":"적립금 10,000P" ,        "color" : "#25284b"},  //0
+            {"title":"할인쿠폰 3,000원" ,      "color" : "#25284b"},   //1
+            {"title":"할인쿠폰 5,000원" ,      "color" : "#25284b"},   //2
+            {"title":"꽝!",                   "color" : "#d34100"},    //3
+            {"title":"적립금 500P" ,           "color" : "#25284b"}, //4
+            {"title":"적립금 1,000P" ,         "color" : "#25284b"}, //5
         ],
         onStart : function(){
             console.log("start");

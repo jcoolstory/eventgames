@@ -215,6 +215,294 @@ class GameUtil {
         context.lineTo(endX, endY);
         context.stroke();        
     }
+
+    
+    static drawTextAlign(c: CanvasRenderingContext2D, text : string, x : number , width : number, y : number , align: string)
+    {
+        var measureWidth =  c.measureText(text).width;
+        switch(align)
+        {
+            case "left":
+                c.fillText(text,x,y);
+            break;
+            case "center" :
+                c.fillText(text,x + width / 2 - measureWidth/2,y);
+            break;
+            case "right" :
+                c.fillText(text,x + width - measureWidth,y);
+            break;
+        }
+    }
+
+    static drawTextRegionAlign(c: CanvasRenderingContext2D, text : string, region : Rect, align: string, lineHeight : number)
+    {
+        var measureFullText = c.measureText(text).width;
+        var lineBreak = false;
+        if (region.width < measureFullText)
+            lineBreak = true;
+        c.save();
+        //c.translate(0,lineHeight );
+        var line = Math.ceil(measureFullText /  region.width);
+        var startY = ((line-1) * lineHeight) /2;
+        var measureArray : Array<number> = [];
+        var multiLineText : Array<string> =[];
+        var textWidth = 0;
+        var linebuff = 0;
+        multiLineText[0] = "";
+        for(var i = 0 ; i < text.length;i++)
+        {
+            var ch = text[i];
+            var le = c.measureText(ch).width
+            measureArray.push(le);
+            textWidth += le;
+            
+            if (region.width < textWidth)
+            {
+                textWidth=le;
+                linebuff++;
+                multiLineText[linebuff] = "";
+            }
+            multiLineText[linebuff] +=ch;
+        }
+
+        switch(align)
+        {
+            case "lefttop":
+            if (lineBreak)           
+            {
+                for(var i = 0 ; i < multiLineText.length ; i++)
+                {                    
+                    c.fillText(multiLineText[i],region.x,region.y+ lineHeight);      
+                    c.translate(0,lineHeight);
+                }
+            }
+            else
+            {
+                c.fillText(text,region.x,region.y+ lineHeight);
+            }
+            break;
+            case "centertop":
+            if (lineBreak)
+            {
+                for(var i = 0 ; i < multiLineText.length ; i++)
+                {
+                    measureFullText = c.measureText(multiLineText[i]).width;
+                    c.fillText(multiLineText[i],region.x + region.width/ 2- measureFullText /2 ,region.y+ lineHeight);
+                    c.translate(0,lineHeight);
+                }
+            }
+            else
+            {
+                c.fillText(text,region.x + region.width/ 2- measureFullText /2 ,region.y+ lineHeight);
+            }
+            break;
+            case "righttop":
+            if (lineBreak)
+            {
+                for(var i = 0 ; i < multiLineText.length ; i++)
+                {
+                    measureFullText = c.measureText(multiLineText[i]).width;
+                    c.fillText(multiLineText[i],region.x + region.width - measureFullText ,region.y+ lineHeight);
+                    c.translate(0,lineHeight);
+                }
+            }
+            else
+            {
+            c.fillText(text,region.x + region.width - measureFullText ,region.y+ lineHeight);
+            }
+            break;
+            case "leftmiddle":
+            
+            if (lineBreak)           
+            {
+                for(var i = 0 ; i < multiLineText.length ; i++)
+                {
+                    c.fillText(multiLineText[i],region.x,region.y + region.height /2 + lineHeight * 0.3 - startY);     
+                    c.translate(0,lineHeight);
+                }
+            }
+            else
+            {
+                c.fillText(text,region.x,region.y + region.height /2 + lineHeight * 0.3);
+            }
+            break;
+            case "centermiddle":
+            if (lineBreak)           
+            {
+                for(var i = 0 ; i < multiLineText.length ; i++)
+                {                    
+                    measureFullText = c.measureText(multiLineText[i]).width;
+                    c.fillText(multiLineText[i],region.x + region.width/ 2 - measureFullText /2 ,region.y + region.height /2  + lineHeight * 0.3 - startY);
+                    c.translate(0,lineHeight);
+                }
+            }
+            else
+            {
+                c.fillText(text,region.x + region.width/ 2 - measureFullText /2 ,region.y + region.height /2 + lineHeight * 0.3 -startY);
+            }
+            
+            break;
+            case "rightmiddle":
+            if (lineBreak)           
+            {
+                for(var i = 0 ; i < multiLineText.length ; i++)
+                {      
+                    measureFullText = c.measureText(multiLineText[i]).width;
+                    c.fillText(multiLineText[i],region.x + region.width - measureFullText ,region.y + region.height /2  + lineHeight * 0.3- startY );
+                    c.translate(0,lineHeight);
+                }
+            }
+            else
+            {
+                c.fillText(text,region.x + region.width - measureFullText ,region.y + region.height /2  + lineHeight * 0.3 );
+            }
+            break;
+            case "leftbottom":
+            if (lineBreak)           
+            {
+                for(var i = 0 ; i < multiLineText.length ; i++)
+                {      
+                    c.fillText(multiLineText[i],region.x,region.y + region.height - lineHeight * 0.3 - (line-1) * lineHeight);
+                    c.translate(0,lineHeight);
+                }
+            }
+            else{
+                c.fillText(text,region.x,region.y + region.height - lineHeight * 0.3);
+            }            
+            break;
+            case "centerbottom":
+            if (lineBreak)           
+            {
+                for(var i = 0 ; i < multiLineText.length ; i++)
+                {      
+                    measureFullText = c.measureText(multiLineText[i]).width;
+                    c.fillText(multiLineText[i],region.x + region.width/ 2 - measureFullText /2 ,region.y + region.height- lineHeight * 0.3 - (line-1) * lineHeight);
+                    c.translate(0,lineHeight);
+                }
+            }
+            else{
+                c.fillText(text,region.x + region.width/ 2 - measureFullText /2 ,region.y + region.height- lineHeight * 0.3 );
+            }
+       
+            break;
+            case "rightbottom":
+            if (lineBreak)           
+            {
+                for(var i = 0 ; i < multiLineText.length ; i++)
+                {      
+                    measureFullText = c.measureText(multiLineText[i]).width;
+                    c.fillText(multiLineText[i],region.x + region.width - measureFullText ,region.y + region.height- lineHeight * 0.3 - (line-1) * lineHeight);
+                    c.translate(0,lineHeight);
+                }
+            }
+            else{
+                c.fillText(text,region.x + region.width - measureFullText ,region.y + region.height- lineHeight * 0.3);
+            }
+            break;
+
+        }
+        c.restore();
+    }
+
+    public static splitText(c: CanvasRenderingContext2D, text : string, width :number, measureLength: number,) : Array<string>
+    {
+        var multiLineBuffer = Array<string>();
+        if (width < measureLength)
+        {
+            var textWidth = 0 ,splitStart = 0 , lineIndex = 0;
+            for(var i = 0 ; i < text.length;i++)
+            {
+                var ch = text[i];
+                var le = c.measureText(ch).width
+                textWidth += le;
+                if (width < textWidth)
+                {
+                    textWidth=le;
+                    multiLineBuffer[lineIndex++] = text.substring(splitStart,i);
+                    splitStart = i;
+                }
+            }
+            var endch = text.substring(splitStart,i);
+            if (endch != " ")
+                multiLineBuffer[lineIndex++] = endch;
+        }
+        else
+        {
+            multiLineBuffer = [text];
+        }
+
+        return multiLineBuffer;
+    }
+
+    public static splitWordText(c: CanvasRenderingContext2D, text : string, width :number, measureLength: number,) : Array<string>
+    {
+        var multiLineBuffer = Array<string>();
+        var words = text.split(' ');
+        var textWidth = 0 , lineCount = 0;
+        multiLineBuffer[lineCount] = '';
+        words.forEach(el=>{
+            var ch = el + " ";
+            var le = c.measureText(ch).width;
+            if (width < le)
+            {
+                var buffer = GameUtil.splitText(c,ch,width,le);
+                buffer.length;
+                ch = buffer[buffer.length-1];
+                le = c.measureText(ch).width;
+                buffer.forEach((el,i)=>{
+                    if (i == 0 &&  multiLineBuffer[lineCount] == '')
+                        multiLineBuffer[lineCount] += el;
+                    else
+                        multiLineBuffer.push(el);
+                    lineCount++;
+                })
+                textWidth = le;
+                return;
+            }
+            
+            textWidth += le;
+
+            if (width < textWidth)
+            {
+                textWidth=le;
+                multiLineBuffer[++lineCount] = el;
+            }
+            else
+            {
+                multiLineBuffer[lineCount] += ch;
+            }
+            
+        });
+        return multiLineBuffer;
+    }
+
+    public static drawTextRegion(c: CanvasRenderingContext2D, text : string, region : Rect, align: string, valign:string, lineHeight : number)
+    {
+        var fullLength = c.measureText(text).width;
+        var lineBreak = false;
+        var multiLineBuffer = GameUtil.splitWordText(c,text, region.width, fullLength);
+        var y =0;
+        c.save();
+        switch(valign)
+        {
+            case "top":
+                y = region.y + lineHeight;
+            break;
+            case "middle":
+                y = region.y + region.height / 2  - ((multiLineBuffer.length-1) * lineHeight) /2 + lineHeight * 0.3 ;
+            break;
+            case "bottom":
+                y = region.y + region.height - (multiLineBuffer.length-1)* lineHeight - lineHeight * 0.3;
+            break;
+        }
+        
+        multiLineBuffer.forEach((element,i) => {
+            
+            GameUtil.drawTextAlign(c, element, region.x,region.width, y,align);
+            c.translate(0,lineHeight);
+        });
+        c.restore();
+    }
 }
 
 class Button implements ClickObject, RenderObject

@@ -200,25 +200,22 @@ class LadderGame  extends GameRenderer {
          {
             // bottom buttons draw
             c.save();
-            c.translate(137,this.barHeight+this.paddingY+this.paddingY+ 50);
-         
+            c.translate(137,this.barHeight+this.paddingY+this.paddingY+ 40);
+            var region = {x:-60,y:-40,width:120,height:100};
             if (this.status == LadderGameStatus.finished)
             {
                 c.font = "bold 25px Nanum Gothic";
                 for(var i = 0 ; i < this.horizontalBar ; i++)
                 {
                     c.fillStyle = this.items[i].color;
-                    
+                    var y = 0;
+                    if (i % 2 == 1)
+                        y = 35;
                     if (this.items[i].title)
                     {
-                        var offset = c.measureText(this.items[i].title).width /2;
-                        c.fillText(this.items[i].title,-offset,0);
+                        GameUtil.drawTextRegion(c,this.items[i].title, region,"center","top", 36);
                     }
-                    if (this.items[i].value)
-                    {
-                        var offset = c.measureText(this.items[i].value).width /2;
-                        c.fillText(this.items[i].value,-offset,30);
-                    }
+
                     c.translate(this.horizontalBarMargin,0);
                 }
                 }
@@ -288,6 +285,7 @@ class LadderGame  extends GameRenderer {
             {
                 this.onEnd(goalIndex,this.items)
             }
+            this.stop();
         }
 
         return resultPoints;    
