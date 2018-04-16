@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "outDir": "dist",
+        "outFile": "../../dist/cupmonte.js"
+    }
+    ,"files": [
+        "../engine.ts","cupmonte.ts"
+    ]
+}

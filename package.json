@@ -11,7 +11,8 @@
     "ladder":"cd src/ladder && tsc",
     "roulette":"cd src/roulette && tsc",
     "dice":"cd src/dice && tsc",
-    "build" : "npm run ladder && npm run roulette && npm run dice"
+    "cupmonte":"cd src/cupmonte && tsc",
+    "build" : "npm run ladder && npm run roulette && npm run dice && npm run cupmonte"
   },
   "author": "",
   "license": "ISC",
