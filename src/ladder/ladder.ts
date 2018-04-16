@@ -2,6 +2,10 @@
 enum LadderGameStatus{
     prepare, ready, pathdraw , finished
 }
+class StartButton extends Button
+{
+    isOver : boolean = false;
+}
 
 class LadderGame  extends GameRenderer {
 
@@ -24,6 +28,7 @@ class LadderGame  extends GameRenderer {
     private pathVelocity = 300;
     private receiveIndex = -1;
     private debug = false;
+    private startButton : StartButton;
     /**
      *  start event (start button click ) 
      */
@@ -85,7 +90,7 @@ class LadderGame  extends GameRenderer {
             };
             this.buttons.push(button);
         }
-        var startButton = new Button();
+        var startButton = new StartButton();
         startButton.id = 100, 
         startButton.x = 330, 
         startButton.y = 350;
@@ -94,6 +99,7 @@ class LadderGame  extends GameRenderer {
         startButton.onClick = (evt, sender) =>{
             this.pathStart();
         }
+        this.startButton = startButton;
         this.buttons.push(startButton);
 
         //this.paths =  this.pathCreate();
@@ -174,7 +180,8 @@ class LadderGame  extends GameRenderer {
         c.fillStyle ="#535353";
         c.fillText("아래 버튼을  눌러주세요 ",330,320);
         
-        c.fillStyle = "#25284b"
+        
+        c.fillStyle = this.startButton.isOver ? "red" : "#25284b";
         GameUtil.roundRect(c,350,350,300,80,35,true,false);
         c.fillStyle = "white";
         c.fillText("시작하기 ",440,400);
@@ -530,6 +537,14 @@ class LadderGame  extends GameRenderer {
     }
 
     mouseMove(evt : MouseEvent){
+        if (evt.offsetX >= this.startButton.x && evt.offsetY > this.startButton.y && evt.offsetX <= this.startButton.x + this.startButton.width && evt.offsetY <= this.startButton.y + this.startButton.height)
+        {
+            this.startButton.isOver = true;
+        }
+        else
+        {
+            this.startButton.isOver =false;
+        }
     }
 
     initCrossPoint(fixX : number, fixY : number) : Object
