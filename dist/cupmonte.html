@@ -10,27 +10,18 @@
 </head>
 <body>    
     <div id="roulette_container">
-        <img id="evt_roulette" src="./img/dice_event.png">
+        <img id="evt_roulette" src="./img/cupgame_event.png">
         <canvas id="canvas" width="1024", height = "600" style="position:absolute;top:30%;left:0%;transform-origin:0 0"></canvas>
         <!-- <canvas id="canvas" width="900", height = "900" style="position:absolute;top:22.3%;left:0%;transform-origin:0 0;transform : scale(0.3)"></canvas> -->
     </div>
 </body>
 <script>
-    var dice = new CupmonteGame();
-    var init = dice.init({
+    var cupGame = new CupmonteGame();
+    var init = cupGame.init({
         "context" : "canvas",
         "imageurl" : "./img/",
-        "buttonon" : "roulette_button_start.png",
-        "buttonoff" : "roulette_button_empty.png",
         "isStart" : true,
-        "items" :  [
-                {"title":"적립금 10,000P",         "bgColor" : "#96dd61"},  //0
-                {"title":"할인쿠폰 3,000원",       "bgColor" : "#1f7dbd"},   //1
-                {"title":"할인쿠폰 5,000원",       "bgColor" : "#d35ef0"},   //2
-                {"title":"꽝!",                   "bgColor" : "#a21d22"},    //3
-                {"title":"적립금 500P",            "bgColor" : "#e8953d"}, //4
-                {"title":"적립금 1,000P",          "bgColor" : "#72b6e5"}, //5
-                ],
+        
         onStart : function(){
             console.log("start");
             /// test (실제 서버 데이타)
@@ -39,16 +30,25 @@
                 receiveIndex();
             },2000);
         },
-        onEnd : function(index,items){
+        onEnd : function(items){
             //console.log(index, items[index]);
             console.log("onEnd");
         }
     })
     function receiveIndex(){
-        var select = parseInt(Math.random() * 6);
+        
         console.log("receive ", select);
-        dice.setIndex(select);
+        var items = [
+                "꽝!",
+                "적립금 10,000P",
+                "할인쿠폰 3,000원",
+                "할인쿠폰 5,000원",
+                "적립금 500P",
+                "적립금 1,000P",
+        ]
+        var select = parseInt(Math.random() * items.length);
+        cupGame.setItem(select == 0,items[select]);
     }
-    dice.start();
+    cupGame.start();
 </script>
 </html>
