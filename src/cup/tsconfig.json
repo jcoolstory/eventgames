@@ -2,9 +2,9 @@
     "compilerOptions": {
         "target": "ES5",
         "outDir": "dist",
-        "outFile": "../../dist/cupmonte.js"
+        "outFile": "../../dist/cup.js"
     }
     ,"files": [
-        "../engine.ts","cupmonte.ts"
+        "../engine.ts","cup.ts"
     ]
 }
