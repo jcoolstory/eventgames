@@ -7,15 +7,49 @@ class StartButton {
 
 class CupmonteGame extends GameRenderer {
 
+    /**
+     * game status
+     */
     status : CupmonteGameStatus = CupmonteGameStatus.ready;
+
+    /**
+     * cup item array
+     */
     cups : Array<CupItem> = new Array<CupItem>();
+    /**
+     * cup 믹스할때 반복 수행하는 시간 변수
+     */
     mixLoopDuration = 0;
+    /**
+     * cup 믹스하는 전체 수행 시간
+     */
     mixDuration = 0;
+    /**
+     * 시작버튼
+     */
     startButton  = new StartButton();
+    /**
+     * 꽝 이미지 리소스
+     */
     cup_missImage : ImageObject  = undefined;
+    /**
+     * 유저가 선택한 컵 
+     */
     openItemIndex = -1;
+    /**
+     * 꽝 인지 확인용 변수
+     */
     failed = false;
+    /**
+     * 최종 당첨 메세지
+     */
     finishMessage = undefined;
+
+    /**
+     * 게임 시작 여부
+     */
+    isStart = false;
+    
     //#region events
     /**
      *  start event (start button click ) 
@@ -27,7 +61,6 @@ class CupmonteGame extends GameRenderer {
     public onEnd : Function = ()=>{};
     //#endregion
 
-    isStart = false;
     public init(config: Object) : boolean
     {
         super.init(config);
@@ -48,6 +81,7 @@ class CupmonteGame extends GameRenderer {
             render:(c)=>this.drawGame(c)
         });
 
+        // cup 3개 init
         var cup1 = new CupItem();
         cup1.x = slot[0].x;
         cup1.y = slot[0].y;
@@ -75,22 +109,31 @@ class CupmonteGame extends GameRenderer {
         this.cups.push(cup1);
         this.cups.push(cup2);
         this.cups.push(cup3);
+
+        // start button init
         this.startButton.bounds = { x:350,y:450,width:300,height:80};
         this.startButton.enable = this.isStart;
         return true;
     }
 
+    /**
+     * 전체 게임 그리는 root render
+     * @param c canvas context
+     */
     private drawGame(c:GameCanvas) {
 
         if (this.status == CupmonteGameStatus.ready ||
             this.status == CupmonteGameStatus.mix   ||
             this.status == CupmonteGameStatus.select
         ){
-            
+            // 시작버튼 및 알림문구 그리기
             this.drawPopup(c);
         }
         else 
         {
+            // 최종 확인 장면 그리기
+
+            // 꽝
             if (this.failed)
             {
                 c.save();
@@ -99,27 +142,23 @@ class CupmonteGame extends GameRenderer {
                 c.restore();
             }
             else{
-                //GameUtil.drawTextRegionAlign(c,"sdfasdf", {x: 100, y:100, width: 200, height:300,})
                 c.font = "bold 38px Nanum Gothic"
                 c.fillStyle ="black";
-                //c.fillText(this.finishMessage,20,50);
                 GameUtil.drawTextAlign(c,this.finishMessage,0,this.width,400,"center");
             }
         }
 
+        // cup draw
         this.cups.forEach(element => {
             element.render(c);
         });
        
     }
 
-    public setItem(failed :boolean, message : string)
-    {
-        this.failed = failed;
-        this.finishMessage = message;
-        console.log(this.failed, this.finishMessage)
-    }
-
+    /**
+     * 시작버튼 및 안내문구 그리기
+     * @param c canvas context
+     */
     private drawPopup(c:GameCanvas)
     {
         if (this.status == CupmonteGameStatus.select)
@@ -148,6 +187,16 @@ class CupmonteGame extends GameRenderer {
         c.fillText("시작 ",470,500);
     }
 
+    public setItem(failed :boolean, message : string)
+    {
+        this.failed = failed;
+        this.finishMessage = message;
+    }
+
+    /**
+     * game frame update
+     * @param delayTime frame delay time
+     */
     protected update(delayTime : number)
     {
         this.cups.forEach(element => {
@@ -171,6 +220,10 @@ class CupmonteGame extends GameRenderer {
         }
     }
 
+    /**
+     * 배열을 랜덤하게 섞음
+     * @param a array
+     */
     public shuffle(a) {
         var j, x, i;
         for (i = a.length - 1; i > 0; i--) {
@@ -181,28 +234,37 @@ class CupmonteGame extends GameRenderer {
         }
     }
 
+    /**
+     * 임의의 카드 중에 하나를 다른카드와 섞기
+     */
     private mixCard()
     {
-        var i = movePos =  GameUtil.randomInt(3);
-        let el = this.cups[i];
-        
-        var movePos = undefined;
-        do{
-            movePos =  GameUtil.randomInt(3);
-        }while( movePos == el.position)
+        let cupA = this.cups[GameUtil.randomInt(3)];
 
-        var curpos = el.position;
-        var changeCup : CupItem= undefined;
+        var aPos = cupA.position;
+        var bPos = undefined;        
+        
+        do{
+            bPos =  GameUtil.randomInt(3);
+        }while( bPos == cupA.position) // 중복 방지를위해 loop
+
+
+        // 이동할 위치에 있는 다른카드 찾기
+        var cupB : CupItem= undefined;
         for (var j = 0 ;  j < this.cups.length ; j++)
-            if (this.cups[j].position == movePos)
+            if (this.cups[j].position == bPos)
             {
-                changeCup = this.cups[j];
+                cupB = this.cups[j];
                 break;
             }
-        el.doMoveTo(slot[movePos].x, slot[movePos].y,100,0.3);
-        el.position = movePos;
-        changeCup.doMoveTo(slot[curpos].x, slot[curpos].y,100,0.3);
-        changeCup.position = curpos;
+        
+
+        // card swap
+        cupA.doMoveTo(slot[bPos].x, slot[bPos].y,0.3);
+        cupA.position = bPos;
+
+        cupB.doMoveTo(slot[aPos].x, slot[aPos].y,0.3);
+        cupB.position = aPos;
 
     }
     
@@ -210,6 +272,7 @@ class CupmonteGame extends GameRenderer {
     {
         if (this.status == CupmonteGameStatus.ready)
         {
+            // start button event
             if (!this.startButton.enable)
             {
                 return;
@@ -224,6 +287,7 @@ class CupmonteGame extends GameRenderer {
         }
         else if (this.status ==  CupmonteGameStatus.select)
         {
+            // select cup item event
             for ( var i = 0 ; i < this.cups.length; i++)
             {
                 let el = <CupItem> this.cups[i];
@@ -254,41 +318,55 @@ interface Action {
 
 
 class CupItem implements RenderObject{
-
+    /**
+     * cup의 status
+     */
+    status : CupStatus = CupStatus.close;
+    /**
+     * logical position (0,1,2)
+     */
     position : number;
-    width : number;
-    height : number;
+
+    //#region bounds    
     x:number;
     y:number;
-    moveTo : Point;
+    width : number;
+    height : number;
+    //#endregion
+
+    //#region move velocity
     velocityX : number =0;
     velocityY : number = 0;
+    //#endregion
+
+    /**
+     * open 시 rotate 될 각도
+     */
     openRotate : number = 30;
-    status : CupStatus = CupStatus.close;
+    
+    /**
+     * animate action collection (현재 move 하나만 사용하고있다)
+     */
     actionCollection : Array<Action> = new Array<Action>();
     image : ImageObject = undefined;
-    onClick (evt : MouseEvent , el : CupItem)
-    {
-        
-    }
+
+    onClick (evt : MouseEvent , el : CupItem) {}
+
     update(delayTime:number)
     {
+        // action collection processing
         this.actionCollection.forEach(el=>{
             var conti = el.doWork(delayTime);
             el.finished =!conti;
+            // 종료된 action이면 finish event call
             if (el.finished)
                 el.finish();
         });
 
+        // finish 된 action 정리
         this.actionCollection = this.actionCollection.filter(el=>{
             return !el.finished;
         })
-
-        // if(this.actionCollection.length == 0 && this.status == CupStatus.move)
-        // {
-        //     var movePosition = GameUtil.randomInt(3);
-        //     this.doMoveTo(slot[movePosition].x, slot[movePosition].y,100,0.3);
-        // }
     }
 
     public doOpen()
@@ -296,20 +374,24 @@ class CupItem implements RenderObject{
         this.status = CupStatus.open;
     }
 
-    public doMoveTo(x, y,velocity, duration)
+    /**
+     * 특정 위치로 특정 시간안에 이동시키기
+     * @param x destination x position
+     * @param y destination y position
+     * @param duration  duration time (unit: sec)
+     */
+    public doMoveTo(x, y, duration)
     {
         var currentTime = 0;
-        
+
+        // move action 생성
         var move = <Action> {
-            start: ()=>{
-                
-            },
             doWork : (delayTime : number) =>{
                 currentTime += delayTime;
                 if (currentTime > duration)
                     return false;
-                this.x += this.velocityX *delayTime;
-                this.y += this.velocityY  *delayTime;
+                this.x += this.velocityX * delayTime;
+                this.y += this.velocityY * delayTime;
                 return true;
             },
             finish : () =>{
@@ -317,39 +399,33 @@ class CupItem implements RenderObject{
                 this.y = y;
             }
         };
-        this.actionCollection = [];
-        this.actionCollection.push(move);
-        var distanceX =  x - this.x;
-        var distanceY =  y - this.y
-        var angle = Math.atan2(distanceY, distanceX);
-        var dist = velocity;
-        this.velocityX =  Math.cos(angle) * dist ;
-        this.velocityY = Math.sin(angle) * dist;
+        this.actionCollection = [move];
         this.velocityX =  ( x - this.x) * 1/ duration
         this.velocityY =  ( y - this.y) * 1/duration
         this.status = CupStatus.move;
     }
 
+    /**
+     * cup draw
+     * @param c canvas context
+     */
     render(c:GameCanvas)
     {
         c.save();
         switch(this.status)
         {
             case CupStatus.close:
-                c.fillStyle = "red"
                 c.translate(this.x , this.y);
                 c.drawImage(this.image.Image,0,0);
                 break;
             case CupStatus.move:
-                c.fillStyle = "green"
                 c.translate(this.x , this.y);
                 c.drawImage(this.image.Image,0,0);
                 break;
             case CupStatus.open:
-                c.fillStyle = "blue"
                 c.translate(this.x + 228 , this.y +212);
                 c.rotate(GameUtil.toRadians(this.openRotate))
-                c.translate(-228 , -212);
+                c.translate(-228 ,-212);
                 c.drawImage(this.image.Image,0,0);
                 break;
         }
