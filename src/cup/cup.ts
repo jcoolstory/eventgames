@@ -299,6 +299,7 @@ class CupmonteGame extends GameRenderer {
                     this.status = CupmonteGameStatus.finish;
                     this.onEnd(this.finishMessage);
                     this.canvas.style.cursor = "default";
+                    this.stop();
                     break;
                 }
             }

@@ -48,12 +48,12 @@ class LadderGame  extends GameRenderer {
         var imgUrlPrefix = "./img/";
 
         var defaultItem = [
-            {"title":"적립금" ,    "value":"10,000P",         "color" : "#25284b"},  //0
-            {"title":"할인쿠폰" ,   "value":"3,000원",        "color" : "#25284b"},   //1
-            {"title":"할인쿠폰" ,   "value":"5,000원",        "color" : "#25284b"},   //2
-            {"title":"꽝!",        "value":undefined,                "color" : "#d34100"},    //3
-            {"title":"적립금 " ,   "value":"500P",            "color" : "#25284b"}, //4
-            {"title":"적립금 " ,   "value":"1,000P",          "color" : "#25284b"}, //5
+            {"title":"적립금 10,000P" ,        "color" : "#25284b"},  //0
+            {"title":"할인쿠폰 3,000원" ,      "color" : "#25284b"},   //1
+            {"title":"할인쿠폰 5,000원" ,      "color" : "#25284b"},   //2
+            {"title":"꽝!",                   "color" : "#d34100"},    //3
+            {"title":"적립금 500P" ,           "color" : "#25284b"}, //4
+            {"title":"적립금 1,000P" ,         "color" : "#25284b"}, //5
         ]
         var isStart = false; 
 
@@ -97,7 +97,7 @@ class LadderGame  extends GameRenderer {
         startButton.width = 300
         startButton.height = 80;
         startButton.onClick = (evt, sender) =>{
-            this.pathStart();
+            this.startFindPath();
         }
         this.startButton = startButton;
         this.buttons.push(startButton);
@@ -156,6 +156,7 @@ class LadderGame  extends GameRenderer {
 
         c.restore();
         
+        // draw ui
         this.drawButtons(c);
         if (this.isStart && this.status == LadderGameStatus.ready)
         {
@@ -173,14 +174,16 @@ class LadderGame  extends GameRenderer {
         c.strokeStyle = "#a2a6cc";
         c.lineWidth = 8;
         GameUtil.roundRect(c,81,180,840,300,15,true,true);
+
         c.fillStyle = "#25284b";
         c.font = "bold 38px Nanum Gothic"
         c.fillText("마음에 드는 번호를 클릭한 후 ",270,260);
+
         c.font = "bold 30px Nanum Gothic"
         c.fillStyle ="#535353";
         c.fillText("아래 버튼을  눌러주세요 ",330,320);
         
-        
+        // draw start button
         c.fillStyle = this.startButton.isOver ? "red" : "#25284b";
         GameUtil.roundRect(c,350,350,300,80,35,true,false);
         c.fillStyle = "white";
@@ -209,15 +212,14 @@ class LadderGame  extends GameRenderer {
             c.save();
             c.translate(137,this.barHeight+this.paddingY+this.paddingY+ 40);
             var region = {x:-60,y:-40,width:120,height:100};
+
+            // 당첨된 내용 draw
             if (this.status == LadderGameStatus.finished)
             {
                 c.font = "bold 25px Nanum Gothic";
                 for(var i = 0 ; i < this.horizontalBar ; i++)
                 {
                     c.fillStyle = this.items[i].color;
-                    var y = 0;
-                    if (i % 2 == 1)
-                        y = 35;
                     if (this.items[i].title)
                     {
                         GameUtil.drawTextRegion(c,this.items[i].title, region,"center","top", 36);
@@ -225,9 +227,9 @@ class LadderGame  extends GameRenderer {
 
                     c.translate(this.horizontalBarMargin,0);
                 }
-                }
-                else
-                {
+            }
+            else
+            {
                 c.fillStyle = "#25284b";
                 c.font = "bold 72px Nanum Gothic";
                 for(var i = 0 ; i < this.horizontalBar ; i++)
@@ -267,6 +269,8 @@ class LadderGame  extends GameRenderer {
                 resultPoints.push(element);      
             }
             else{
+                
+                // 현재 진행된 line 길이가 전체 길이를 넘지않을경우
                 if (this.lineLength > willLength)
                 {
                     resultPoints.push(element);      
@@ -274,6 +278,7 @@ class LadderGame  extends GameRenderer {
                 }
                 else
                 {
+                    // 최종 endpoint 
                     resultPoints.push(this.getEndpoint(lastPoint, element, currentLength) );
                     break;                
                 }
@@ -281,8 +286,10 @@ class LadderGame  extends GameRenderer {
             lastPoint = element;
         }
 
+        // 최정 목적지 도착했을경우 finish
         if (totalLength < this.lineLength && this.status != LadderGameStatus.finished)
         {
+            // 최종 선택 item 과 위치가 선정된후 나머지 아이템은 랜덤하게 배치된다.
             var goalIndex = this.selectedPath[this.selectedPath.length-1].x;
             var ch_item = this.items.splice(this.receiveIndex,1);
             this.shuffle(this.items);
@@ -298,6 +305,10 @@ class LadderGame  extends GameRenderer {
         return resultPoints;    
     }
 
+    /**
+     * 배열 섞기
+     * @param a array
+     */
     shuffle(a) {
         var j, x, i;
         for (i = a.length - 1; i > 0; i--) {
@@ -310,6 +321,7 @@ class LadderGame  extends GameRenderer {
 
     private getEndpoint(lastPoint:Point, element:Point, currentLength : number):Point
     {
+        //끝점구하기 진행되었던 마지막코너와 도착할 다음코너와의 중간지점
         var distanceX =  lastPoint.x - element.x;
         var distanceY =  lastPoint.y - element.y
         var angle = Math.atan2(distanceY, distanceX);
@@ -347,9 +359,10 @@ class LadderGame  extends GameRenderer {
         switch(this.status)
         {
             case LadderGameStatus.prepare:
-            this.playtime = this.playtime + delayTime;
-            if (this.playtime > this.prepareTime)
-                this.status = LadderGameStatus.ready;
+                // loading time delay
+                this.playtime = this.playtime + delayTime;
+                if (this.playtime > this.prepareTime)
+                    this.status = LadderGameStatus.ready;
             break;
             case LadderGameStatus.ready:
             
@@ -363,28 +376,31 @@ class LadderGame  extends GameRenderer {
         }
     }
 
+    /**
+     * deprecaited
+     */
     pathCreate() {
         
         var path : Array<Array<Point>> = new Array<Array<Point>>();
         for( var i = 0 ; i < this.horizontalBar; i++)
         {
-            path.push(this.drawGetPath(i));
+            path.push(this.generatePath(i));
         }
         return path;
     }
 
-    drawGetPath(index:number) :Array<Point>
+    generatePath(index:number) :Array<Point>
     {
-        var i = index;
         var path = new Array<Point>();
         var currentPoint : Point;
-        var point = {
-            x:i,
+        var startPoint = {
+            x:index,
             y:0
         };
-        currentPoint = point;
-
+        currentPoint = startPoint;
         path.push(currentPoint);
+
+        // 최종목적지까지 path find
         while(true){
             var fixLeft = this.crossPoints[currentPoint.x-1] ;
             var fixRight = this.crossPoints[currentPoint.x];
@@ -490,7 +506,7 @@ class LadderGame  extends GameRenderer {
         if (this.debug)
         {
             this.selectedNumber = index.id;
-            this.selectedPath =  this.drawGetPath(this.selectedNumber);
+            this.selectedPath =  this.generatePath(this.selectedNumber);
             var selectPath : Array<Point> =  this.selectedPath.map( el =>{
                 return {x: el.x * this.horizontalBarMargin,y:el.y  * this.verticalBarMargin +  20}
             });
@@ -506,13 +522,13 @@ class LadderGame  extends GameRenderer {
         if (this.status == LadderGameStatus.ready)
         {
             this.selectedNumber = index.id;
-            this.selectedPath =  this.drawGetPath(this.selectedNumber);
+            this.selectedPath =  this.generatePath(this.selectedNumber);
             
             this.lineLength = 0;
         }
     }
 
-    pathStart()
+    startFindPath()
     {
         if (this.status == LadderGameStatus.ready)
         {
@@ -556,6 +572,11 @@ class LadderGame  extends GameRenderer {
         }
     }
 
+    /**
+     * 사다리 교차점 셋
+     * @param fixX 가로 바 갯수
+     * @param fixY 세로바 전체 갯수
+     */
     initCrossPoint(fixX : number, fixY : number) : Object
     {
         var crossPoint : Object = {};
@@ -568,11 +589,14 @@ class LadderGame  extends GameRenderer {
             var arraybuffer = new Array<Line>();
             var vertCount = 0;
             var loopCount = 0;
+            // 가로바 3개까지 생성
             while (vertCount <3) {
                 loopCount++;
                 if (loopCount > 25)
                     break;
-                let y1 =  1+GameUtil.randomInt(fixY);                
+                // 시작점 y
+                let y1 = 1+GameUtil.randomInt(fixY);                
+                // 끝점 y (20% 확률로 대각선을 그린다 - 대각선 범위는 2칸)
                 let y2 = Math.random() < 0.2 ? y1+ GameUtil.randomInt(4)-2: y1;
                 var ignore = false;
                 
@@ -599,6 +623,7 @@ class LadderGame  extends GameRenderer {
                         break;
                     }
 
+                    // 끝점중에 중복 라인방지 
                     if (y2 == crossPoint[i][x].y2)
                     {
                         ignore = true;
@@ -607,6 +632,7 @@ class LadderGame  extends GameRenderer {
 
                     if (y2 != y1)
                     {
+                        // 대각선일경우 x 크로스 방지를 위해
                         if (y1 > y2 && crossPoint[i][x].y2 > y2)
                         {
                             ignore = true;
@@ -622,6 +648,7 @@ class LadderGame  extends GameRenderer {
 
                 if ( i > 0)
                 {
+                    // 왼쪽 지난 세로바에서 생성된 가로바와 새로생성된 가로바위치가 중복인경우
                     for ( var x = 0 ; x < crossPoint[i-1].length; x++) {                
                         if (crossPoint[i-1][x].y2 == y1)
                         {

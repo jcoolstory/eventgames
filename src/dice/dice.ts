@@ -77,15 +77,20 @@ class DiceGame extends GameRenderer {
                 case DiceGameStatus.ready:
                 
                 case DiceGameStatus.roll:
+                    // animate
                     var rect =  this.diceAnimationImage.getCurrentImage();
                     var width = 350;
                     c.save();
+                    
                     c.translate(this.width/2, 20+width/2)
-                    //c.rotate(this.angle);
+                    // c.rotate(this.angle);
                     c.drawImage(this.diceAnimationImage.Image,rect.x, rect.y,rect.width,rect.height, - width/2,-width/2,width,width);
                     c.restore();
+                    // if (this.status == DiceGameStatus.roll)
+                    // this.angle += 0.05101;
                     break;
                 case DiceGameStatus.finish:
+                // 당첨문구 그리기
                     var width = 350;
                     c.save();
                     c.translate(this.width/2, 20+width/2)
@@ -93,13 +98,6 @@ class DiceGame extends GameRenderer {
                     
                     c.font ="28px Nanum Ghothic"
                     var region = {x:-90,y: -100,width:180, height:200}
-                    // c.beginPath();
-                    // c.moveTo(-400,0)
-                    // c.lineTo(400,0);
-                    // c.fillStyle = "red";
-                    // c.stroke();
-
-                    // c.fillRect(region.x,region.y,region.width,region.height)
                     c.fillStyle = "white"
                     GameUtil.drawTextRegion(c,this.items[this.selectIndex].title, region,"center","middle", 36);
                     c.restore();
@@ -108,7 +106,6 @@ class DiceGame extends GameRenderer {
             
         }
 
-        this.angle += 0.05101;
 
         if (this.isStart && this.status == DiceGameStatus.ready)
         {
@@ -170,6 +167,10 @@ class DiceGame extends GameRenderer {
             this.canvas.style.cursor = "default";
         }
     }
+
+    /**
+     * 주사위 굴리기
+     */
     public rollDice()
     {
         this.diceAnimationImage.start();
