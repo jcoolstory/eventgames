@@ -283,6 +283,7 @@ class CupmonteGame extends GameRenderer {
                 this.status = CupmonteGameStatus.mix;
                 this.startButton.enable = false;
                 this.onStart();
+                this.canvas.style.cursor = "default";
             }
         }
         else if (this.status ==  CupmonteGameStatus.select)
@@ -297,8 +298,50 @@ class CupmonteGame extends GameRenderer {
                     this.openItemIndex = el.position;
                     this.status = CupmonteGameStatus.finish;
                     this.onEnd(this.finishMessage);
+                    this.canvas.style.cursor = "default";
                     break;
                 }
+            }
+        }
+    }
+
+    public mouseMove(evt:MouseEvent)
+    {
+        if (this.status == CupmonteGameStatus.ready)
+        {
+            // start button event
+            if (!this.startButton.enable)
+            {
+                return;
+            }
+            var el = this.startButton.bounds;
+            if (evt.offsetX >= el.x && evt.offsetY > el.y && evt.offsetX <= el.x + el.width && evt.offsetY <= el.y + el.height)
+            {
+                this.canvas.style.cursor = "pointer";
+            }else
+            {
+                this.canvas.style.cursor = "default";
+            }
+        }
+        else if (this.status ==  CupmonteGameStatus.select)
+        {
+            var isOver = false;
+            // select cup item event
+            for ( var i = 0 ; i < this.cups.length; i++)
+            {
+                let el = <CupItem> this.cups[i];
+                if (evt.offsetX >= el.x && evt.offsetY > el.y && evt.offsetX <= el.x + el.width && evt.offsetY <= el.y + el.height)
+                {
+                    isOver=true;
+                }
+            }
+
+            if (isOver)
+            {
+                this.canvas.style.cursor = "pointer";
+            }else
+            {
+                this.canvas.style.cursor = "default";
             }
 
         }

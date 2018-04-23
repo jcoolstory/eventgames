@@ -148,9 +148,28 @@ class DiceGame extends GameRenderer {
             evt.offsetY <= this.startButton.y + this.startButton.height)
         {
             this.startButton.onClick(evt,this.startButton);
+            this.canvas.style.cursor = "default";
         }
     }
 
+    public mouseMove(evt:MouseEvent)
+    {
+        if (this.isStart == false)
+            return;
+        if (this.status != DiceGameStatus.ready)
+            return;
+        
+        if (evt.offsetX >= this.startButton.x && 
+            evt.offsetY > this.startButton.y && 
+            evt.offsetX <= this.startButton.x + this.startButton.width && 
+            evt.offsetY <= this.startButton.y + this.startButton.height)
+        {
+            this.canvas.style.cursor = "pointer";
+        }else
+        {
+            this.canvas.style.cursor = "default";
+        }
+    }
     public rollDice()
     {
         this.diceAnimationImage.start();

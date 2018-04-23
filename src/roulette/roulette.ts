@@ -61,7 +61,7 @@ class RouletteGame  extends GameRenderer {
     private rotateStartTime = 0;
     //#endregion
     
-    private startButtonRadius = 82;
+    private startButtonRadius = 93;
     private scale = 1;
    
     /**
@@ -341,7 +341,28 @@ class RouletteGame  extends GameRenderer {
             if (this.status == RouletteGameStatus.ready)
             {
                 this.startRoulette();
+                
+                this.canvas.style.cursor = "default";
             }
+        }
+    }
+
+    mouseMove(evt : MouseEvent){
+        if (!this.isStart || this.status != RouletteGameStatus.ready)
+        {
+            return;
+        }
+            
+        var x = evt.offsetX - this.width / 2  ;
+        var y = evt.offsetY - this.height / 2;        
+        var distance = GameUtil.getDistance(x,y);
+        if ( (this.startButtonRadius * this.scale) > distance)
+        {
+            this.canvas.style.cursor = "pointer";
+        }
+        else
+        {
+            this.canvas.style.cursor = "default";
         }
     }
 }

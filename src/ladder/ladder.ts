@@ -537,13 +537,22 @@ class LadderGame  extends GameRenderer {
     }
 
     mouseMove(evt : MouseEvent){
-        if (evt.offsetX >= this.startButton.x && evt.offsetY > this.startButton.y && evt.offsetX <= this.startButton.x + this.startButton.width && evt.offsetY <= this.startButton.y + this.startButton.height)
+        if (this.isStart == false)
+            return;
+        var isOver = false;
+        this.buttons.forEach( el=>{
+            if (evt.offsetX >= el.x && evt.offsetY > el.y && evt.offsetX <= el.x + el.width && evt.offsetY <= el.y + el.height)
+            {
+                isOver = true;
+            }
+        });
+        if (isOver)
         {
-            this.startButton.isOver = true;
+            this.canvas.style.cursor = "pointer";
         }
         else
         {
-            this.startButton.isOver =false;
+            this.canvas.style.cursor = "default";
         }
     }
 
