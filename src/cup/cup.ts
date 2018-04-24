@@ -59,6 +59,11 @@ class CupmonteGame extends GameRenderer {
      * end event (when rotate stop)
      */
     public onEnd : Function = ()=>{};
+
+    /**
+     * login button click event
+     */    
+    public onLogin : Function = ()=>{};
     //#endregion
 
     public init(config: Object) : boolean
@@ -112,7 +117,6 @@ class CupmonteGame extends GameRenderer {
 
         // start button init
         this.startButton.bounds = { x:350,y:450,width:300,height:80};
-        this.startButton.enable = this.isStart;
         return true;
     }
 
@@ -161,30 +165,46 @@ class CupmonteGame extends GameRenderer {
      */
     private drawPopup(c:GameCanvas)
     {
-        if (this.status == CupmonteGameStatus.select)
-        {
+        if (this.isStart) {
+            if (this.status == CupmonteGameStatus.select) {
+                c.beginPath();
+                c.font = "bold 30px Nanum Gothic"
+                c.fillStyle ="#535353";
+                c.fillText("행운이 들어있는 컵을 클릭해주세요",300,400);
+            }
+            else if (this.status == CupmonteGameStatus.mix)
+            {
+            }
+            else
+            {
+                c.beginPath();
+                c.font = "bold 30px Nanum Gothic"
+                c.fillStyle ="#535353";
+                c.fillText("시작버튼을 눌러주세요",350,400);
+            }
+            
+            c.font = "bold 38px Nanum Gothic"
+            
+            c.fillStyle = this.startButton.enable ? "#25284b" : "#959595";
+            GameUtil.roundRect(c,350,450,300,80,35,true,false);
+            c.fillStyle = "white";
+            c.fillText("시작 ",465,500);
+        } else {
+            
+            
             c.beginPath();
             c.font = "bold 30px Nanum Gothic"
             c.fillStyle ="#535353";
-            c.fillText("행운이 들어있는 컵을 클릭해주세요",300,400);
+            c.fillText("이벤트 참여를 원하시면, 로그인을 해주세요",270,400);
+            
+            
+            c.font = "bold 38px Nanum Gothic"
+            
+            c.fillStyle = this.startButton.enable ? "#25284b" : "#959595";
+            GameUtil.roundRect(c,350,450,300,80,35,true,false);
+            c.fillStyle = "white";
+            c.fillText("LOGIN ",450,500);
         }
-        else if (this.status == CupmonteGameStatus.mix)
-        {
-        }
-        else
-        {
-            c.beginPath();
-            c.font = "bold 30px Nanum Gothic"
-            c.fillStyle ="#535353";
-            c.fillText("시작버튼을 눌러주세요",350,400);
-        }
-        
-        c.font = "bold 38px Nanum Gothic"
-        
-        c.fillStyle = this.startButton.enable ? "#25284b" : "#959595";
-        GameUtil.roundRect(c,350,450,300,80,35,true,false);
-        c.fillStyle = "white";
-        c.fillText("시작 ",470,500);
     }
 
     public setItem(failed :boolean, message : string)
@@ -280,10 +300,17 @@ class CupmonteGame extends GameRenderer {
             var el = this.startButton.bounds;
             if (evt.offsetX >= el.x && evt.offsetY > el.y && evt.offsetX <= el.x + el.width && evt.offsetY <= el.y + el.height)
             {
-                this.status = CupmonteGameStatus.mix;
-                this.startButton.enable = false;
-                this.onStart();
-                this.canvas.style.cursor = "default";
+                if (this.isStart)
+                {
+                    this.status = CupmonteGameStatus.mix;
+                    this.startButton.enable = false;
+                    this.onStart();
+                    this.canvas.style.cursor = "default";
+                }
+                else
+                {
+                    this.onLogin();
+                }
             }
         }
         else if (this.status ==  CupmonteGameStatus.select)

@@ -22,7 +22,7 @@
         "imageurl" : "./img/",
         "buttonon" : "roulette_button_start.png",
         "buttonoff" : "roulette_button_empty.png",
-        "isStart" : true,
+        "isStart" : false,
         "items" :  [
                 {"title":"적립금 10,000P",         "bgColor" : "#96dd61"},  //0
                 {"title":"할인쿠폰 3,000원",       "bgColor" : "#1f7dbd"},   //1
@@ -44,6 +44,10 @@
             console.log("onEnd");
         }
     })
+    dice.onLogin= function(){
+        console.log("login")
+        dice.isStart = true;
+    }
     function receiveIndex(){
         var select = parseInt(Math.random() * 6);
         console.log("receive ", select);

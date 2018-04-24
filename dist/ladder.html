@@ -20,7 +20,7 @@
     var ladderGame = new LadderGame;
     var init = ladderGame.init({
         "context" : "canvas",
-        "isStart" : true,
+        "isStart" : false,
         "items" : [
             {"title":"적립금 10,000P" ,        "color" : "#25284b"},  //0
             {"title":"할인쿠폰 3,000원" ,      "color" : "#25284b"},   //1
@@ -46,7 +46,11 @@
         console.log("receive ", select);
         ladderGame.setIndex(select);
     }
-    console.log(init);
+
+    ladderGame.onLogin = function(){
+        console.log("login");
+        ladderGame.isStart = true;
+    }
     ladderGame.start();
 </script>
 </html>

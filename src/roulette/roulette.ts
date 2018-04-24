@@ -51,6 +51,10 @@ class RouletteGame  extends GameRenderer {
      * end event (when rotate stop)
      */
     public onEnd : Function = ()=>{};
+    /**
+     * login button click
+     */
+    public onLogin : Function = ()=>{};
     //#endregion
 
     //#region debug property
@@ -77,6 +81,7 @@ class RouletteGame  extends GameRenderer {
         var imgUrlPrefix = "./img/";
         var startbuttonOnUrl = "roulette_button_start.png";
         var startButtonOffUrl = "roulette_button_empty.png";
+        var loginButtonUrl = "roulette_button_login.png";
         var itemTitleFont ="bold 28px Nanum Gothic";
 
         // defulat items
@@ -98,12 +103,15 @@ class RouletteGame  extends GameRenderer {
         imgUrlPrefix = this.getParameter(config,"imageurl", imgUrlPrefix);
         startbuttonOnUrl = this.getParameter(config, "buttonon", startbuttonOnUrl)
         startButtonOffUrl = this.getParameter(config, "buttonoff", startButtonOffUrl)
+        loginButtonUrl =  this.getParameter(config,"buttonlogin",loginButtonUrl )
         this.isStart = this.getParameter(config, "isStart", this.isStart);
 
         // image resouce init
         var rouletteBase = new ImageObject(imgUrlPrefix +"roulette_base.png");
         var startButtonReady = new ImageObject(imgUrlPrefix + startbuttonOnUrl);
         var startButtonEmpty = new ImageObject(imgUrlPrefix + startButtonOffUrl);
+        var loginImage = new ImageObject(imgUrlPrefix + loginButtonUrl);
+
         var pinIcon = new ImageObject(imgUrlPrefix +"roulette_pin.png");
 
         var checkLoadedImage =  this.getLoadedCheckFunc([rouletteBase,startButtonReady,startButtonEmpty, pinIcon]);
@@ -155,10 +163,16 @@ class RouletteGame  extends GameRenderer {
             c.drawImage(pinIcon.Image, -30,-440, 66,90);
 
             // status 에 따른 가운드 버튼 그리기
-            if (this.isStart && this.status == RouletteGameStatus.ready)
-                c.drawImage(startButtonReady.Image,-145,-145,290,290);            
-            else 
-                c.drawImage(startButtonEmpty.Image,-145,-145,290,290);            
+            if (this.isStart)
+            {
+                if (this.status == RouletteGameStatus.ready)
+                    c.drawImage(startButtonReady.Image,-145,-145,290,290);            
+                else 
+                    c.drawImage(startButtonEmpty.Image,-145,-145,290,290);            
+            }
+            else {
+                c.drawImage(loginImage.Image,-145,-145,290,290);            
+            }
                 
             c.restore();
             
@@ -331,8 +345,7 @@ class RouletteGame  extends GameRenderer {
     }
 
     mouseDown(evt: MouseEvent) {
-        if (this.isStart == false)
-            return;
+
         var x = evt.offsetX - this.width / 2  ;
         var y = evt.offsetY - this.height / 2;        
         var distance = GameUtil.getDistance(x,y);
@@ -340,7 +353,10 @@ class RouletteGame  extends GameRenderer {
         {
             if (this.status == RouletteGameStatus.ready)
             {
-                this.startRoulette();
+                if (this.isStart)
+                    this.startRoulette();
+                else
+                    this.onLogin();
                 
                 this.canvas.style.cursor = "default";
             }
@@ -348,7 +364,7 @@ class RouletteGame  extends GameRenderer {
     }
 
     mouseMove(evt : MouseEvent){
-        if (!this.isStart || this.status != RouletteGameStatus.ready)
+        if ( this.status != RouletteGameStatus.ready)
         {
             return;
         }

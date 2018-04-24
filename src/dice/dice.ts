@@ -12,6 +12,8 @@ class DiceGame extends GameRenderer {
      */
     public onEnd : Function = ()=>{};
 
+    public onLogin : Function = ()=>{};
+
     public startButton : Button = undefined;
 
     private isStart : boolean = true;
@@ -107,16 +109,30 @@ class DiceGame extends GameRenderer {
         }
 
 
-        if (this.isStart && this.status == DiceGameStatus.ready)
+        if ( this.status == DiceGameStatus.ready)
         {
-            c.fillStyle = "#535353";
-            c.font = "bold 28px Nanum Gothic"
-            c.fillText("버튼을 눌러 주사위를 굴려주세요",300,430);
-            c.font = "bold 30px Nanum Gothic"
-            c.fillStyle = "#25284b"
-            GameUtil.roundRect(c,350,480,300,80,35,true,false);
-            c.fillStyle = "white";
-            c.fillText("주사위 던지기 ",410,530);
+            if (this.isStart)
+            { 
+                c.fillStyle = "#535353";
+                c.font = "bold 28px Nanum Gothic"
+                c.fillText("버튼을 눌러 주사위를 굴려주세요",300,430);
+                c.font = "bold 30px Nanum Gothic"
+                c.fillStyle = "#25284b"
+                GameUtil.roundRect(c,350,480,300,80,35,true,false);
+                c.fillStyle = "white";
+                c.fillText("주사위 던지기 ",410,530);
+            }
+            else
+            {
+                c.fillStyle = "#535353";
+                c.font = "bold 28px Nanum Gothic"
+                c.fillText("이벤트 참여를 원하시면, 로그인을 해주세요",270,430);
+                c.font = "bold 30px Nanum Gothic"
+                c.fillStyle = "#25284b"
+                GameUtil.roundRect(c,350,480,300,80,35,true,false);
+                c.fillStyle = "white";
+                c.fillText("LOGIN",450,530);
+            }
         }
     }
 
@@ -134,8 +150,6 @@ class DiceGame extends GameRenderer {
 
     public mouseDown(evt:MouseEvent)
     {
-        if (this.isStart == false)
-            return;
         if (this.status != DiceGameStatus.ready)
             return;
         
@@ -144,15 +158,20 @@ class DiceGame extends GameRenderer {
             evt.offsetX <= this.startButton.x + this.startButton.width && 
             evt.offsetY <= this.startButton.y + this.startButton.height)
         {
-            this.startButton.onClick(evt,this.startButton);
+            if (this.isStart)
+            {
+                this.startButton.onClick(evt,this.startButton);
+            }
+            else 
+            {
+                this.onLogin();
+            }
             this.canvas.style.cursor = "default";
         }
     }
 
     public mouseMove(evt:MouseEvent)
     {
-        if (this.isStart == false)
-            return;
         if (this.status != DiceGameStatus.ready)
             return;
         

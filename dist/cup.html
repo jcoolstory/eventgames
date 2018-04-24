@@ -20,7 +20,7 @@
     var init = cupGame.init({
         "context" : "canvas",
         "imageurl" : "./img/",
-        "isStart" : true,
+        "isStart" : false,
         
         onStart : function(){
             console.log("start");
@@ -48,6 +48,10 @@
         ]
         var select = parseInt(Math.random() * items.length);
         cupGame.setItem(select == 0,items[select]);
+    }
+    cupGame.onLogin= function(){
+        console.log("login")
+        cupGame.isStart = true;
     }
     cupGame.start();
 </script>

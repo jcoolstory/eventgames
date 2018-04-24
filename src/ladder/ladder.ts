@@ -37,6 +37,10 @@ class LadderGame  extends GameRenderer {
      * end event (when rotate stop)
      */
     public onEnd : Function = ()=>{};
+    /**
+     * login button click event 
+     */
+    public onLogin : Function = ()=>{};
     private items : Array<any> = undefined;
     private isStart = true;
     private checkedIcon : ImageObject;
@@ -158,7 +162,7 @@ class LadderGame  extends GameRenderer {
         
         // draw ui
         this.drawButtons(c);
-        if (this.isStart && this.status == LadderGameStatus.ready)
+        if (this.status == LadderGameStatus.ready)
         {
             this.drawReadyPopup(c);
         }
@@ -175,19 +179,36 @@ class LadderGame  extends GameRenderer {
         c.lineWidth = 8;
         GameUtil.roundRect(c,81,180,840,300,15,true,true);
 
-        c.fillStyle = "#25284b";
-        c.font = "bold 38px Nanum Gothic"
-        c.fillText("마음에 드는 번호를 클릭한 후 ",270,260);
+        if (this.isStart) {
+            c.fillStyle = "#25284b";
+            c.font = "bold 38px Nanum Gothic"
+            c.fillText("마음에 드는 번호를 클릭한 후 ",270,260);
 
-        c.font = "bold 30px Nanum Gothic"
-        c.fillStyle ="#535353";
-        c.fillText("아래 버튼을  눌러주세요 ",330,320);
-        
-        // draw start button
-        c.fillStyle = this.startButton.isOver ? "red" : "#25284b";
-        GameUtil.roundRect(c,350,350,300,80,35,true,false);
-        c.fillStyle = "white";
-        c.fillText("시작하기 ",440,400);
+            c.font = "bold 30px Nanum Gothic"
+            c.fillStyle ="#535353";
+            c.fillText("아래 버튼을  눌러주세요 ",330,320);
+            
+            // draw start button
+            c.fillStyle = this.startButton.isOver ? "red" : "#25284b";
+            GameUtil.roundRect(c,350,350,300,80,35,true,false);
+            c.fillStyle = "white";
+            c.fillText("시작하기 ",440,400);
+        }
+        else {
+            // c.fillStyle = "#25284b";
+            // c.font = "bold 38px Nanum Gothic"
+            // c.fillText("마음에 드는 번호를 클릭한 후 ",270,260);
+
+            c.fillStyle = "#535353";
+            c.font = "bold 28px Nanum Gothic"
+            c.fillText("이벤트 참여를 원하시면, 로그인을 해주세요",270,300);
+            
+            // draw start button
+            c.fillStyle = "#25284b";
+            GameUtil.roundRect(c,350,350,300,80,35,true,false);
+            c.fillStyle = "white";
+            c.fillText("Login",460,400);
+        }
     }
 
     private drawButtons(c:GameCanvas)
@@ -530,20 +551,25 @@ class LadderGame  extends GameRenderer {
 
     startFindPath()
     {
-        if (this.status == LadderGameStatus.ready)
-        {
-            if (this.selectedNumber != -1)
+        if (this.isStart) {
+
+            if (this.status == LadderGameStatus.ready)
             {
-                this.status = LadderGameStatus.pathdraw;
-                if (this.onStart)   
-                    this.onStart();
+                if (this.selectedNumber != -1)
+                {
+                    this.status = LadderGameStatus.pathdraw;
+                    if (this.onStart)   
+                        this.onStart();
+                }
             }
+        }
+        else {
+            this.onLogin();
         }
     }
 
     mouseDown(evt: MouseEvent) {
-        if (this.isStart == false)
-            return;
+        
         this.buttons.forEach( el=>{
             if (evt.offsetX >= el.x && evt.offsetY > el.y && evt.offsetX <= el.x + el.width && evt.offsetY <= el.y + el.height)
             {
@@ -553,8 +579,7 @@ class LadderGame  extends GameRenderer {
     }
 
     mouseMove(evt : MouseEvent){
-        if (this.isStart == false)
-            return;
+        
         var isOver = false;
         this.buttons.forEach( el=>{
             if (evt.offsetX >= el.x && evt.offsetY > el.y && evt.offsetX <= el.x + el.width && evt.offsetY <= el.y + el.height)
