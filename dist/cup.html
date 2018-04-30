@@ -21,7 +21,11 @@
         "context" : "canvas",
         "imageurl" : "./img/",
         "isStart" : false,
-        
+        items : [
+                "꽝!",
+                "적립금 10,000P",
+                "할인쿠폰 3,000원",
+        ],
         onStart : function(){
             console.log("start");
             /// test (실제 서버 데이타)
@@ -37,17 +41,8 @@
     })
     function receiveIndex(){
         
-        console.log("receive ", select);
-        var items = [
-                "꽝!",
-                "적립금 10,000P",
-                "할인쿠폰 3,000원",
-                "할인쿠폰 5,000원",
-                "적립금 500P",
-                "적립금 1,000P",
-        ]
-        var select = parseInt(Math.random() * items.length);
-        cupGame.setItem(select == 0,items[select]);
+        console.log("receive ");
+        cupGame.setItem(0);
     }
     cupGame.onLogin= function(){
         console.log("login")

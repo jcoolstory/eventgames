@@ -195,9 +195,6 @@ class LadderGame  extends GameRenderer {
             c.fillText("시작하기 ",440,400);
         }
         else {
-            // c.fillStyle = "#25284b";
-            // c.font = "bold 38px Nanum Gothic"
-            // c.fillText("마음에 드는 번호를 클릭한 후 ",270,260);
 
             c.fillStyle = "#535353";
             c.font = "bold 28px Nanum Gothic"
@@ -207,7 +204,7 @@ class LadderGame  extends GameRenderer {
             c.fillStyle = "#25284b";
             GameUtil.roundRect(c,350,350,300,80,35,true,false);
             c.fillStyle = "white";
-            c.fillText("Login",460,400);
+            c.fillText("LOGIN",460,400);
         }
     }
 
@@ -227,7 +224,7 @@ class LadderGame  extends GameRenderer {
          }
          //
          c.restore();
-         if (this.isStart && this.status != LadderGameStatus.prepare)
+         if (this.status != LadderGameStatus.prepare)
          {
             // bottom buttons draw
             c.save();
@@ -560,6 +557,7 @@ class LadderGame  extends GameRenderer {
                     this.status = LadderGameStatus.pathdraw;
                     if (this.onStart)   
                         this.onStart();
+                    this.canvas.style.cursor = "default";
                 }
             }
         }
@@ -579,21 +577,23 @@ class LadderGame  extends GameRenderer {
     }
 
     mouseMove(evt : MouseEvent){
-        
-        var isOver = false;
-        this.buttons.forEach( el=>{
-            if (evt.offsetX >= el.x && evt.offsetY > el.y && evt.offsetX <= el.x + el.width && evt.offsetY <= el.y + el.height)
+        if (this.status == LadderGameStatus.ready)
+        {
+            var isOver = false;
+            this.buttons.forEach( el=>{
+                if (evt.offsetX >= el.x && evt.offsetY > el.y && evt.offsetX <= el.x + el.width && evt.offsetY <= el.y + el.height)
+                {
+                    isOver = true;
+                }
+            });
+            if (isOver)
             {
-                isOver = true;
+                this.canvas.style.cursor = "pointer";
             }
-        });
-        if (isOver)
-        {
-            this.canvas.style.cursor = "pointer";
-        }
-        else
-        {
-            this.canvas.style.cursor = "default";
+            else
+            {
+                this.canvas.style.cursor = "default";
+            }
         }
     }
 

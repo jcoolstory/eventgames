@@ -37,10 +37,6 @@ class CupmonteGame extends GameRenderer {
      */
     openItemIndex = -1;
     /**
-     * 꽝 인지 확인용 변수
-     */
-    failed = false;
-    /**
      * 최종 당첨 메세지
      */
     finishMessage = undefined;
@@ -66,6 +62,8 @@ class CupmonteGame extends GameRenderer {
     public onLogin : Function = ()=>{};
     //#endregion
 
+    private items = [];
+
     public init(config: Object) : boolean
     {
         super.init(config);
@@ -75,10 +73,17 @@ class CupmonteGame extends GameRenderer {
         this.onEnd = this.getParameter(config, "onEnd", this.onEnd);
         imgUrlPrefix = this.getParameter(config,"imageurl", imgUrlPrefix);
         this.isStart = this.getParameter(config, "isStart", true); 
-
+        
+        var defaultItem = [
+            "꽝!",
+            "적립금 10,000P",
+            "할인쿠폰 3,000원",
+    ]
+        this.items = this.getParameter(config,"items", defaultItem);        
         var cupImage = new ImageObject(imgUrlPrefix + "cup_image.png");
         this.cup_missImage = new ImageObject(imgUrlPrefix + "cup_missicon.png");
-
+        
+        console.log(this.items)
         this.renderCollection.push({
             update: ()=>{
 
@@ -93,6 +98,7 @@ class CupmonteGame extends GameRenderer {
         cup1.width = 268;
         cup1.height = 257;
         cup1.position = 0;
+        cup1.index = 0;
         cup1.image = cupImage;
 
         var cup2 = new CupItem();
@@ -101,6 +107,7 @@ class CupmonteGame extends GameRenderer {
         cup2.width = 268;
         cup2.height = 257;
         cup2.position = 1;
+        cup2.index = 1;
         cup2.image = cupImage;
 
         var cup3 = new CupItem();
@@ -109,6 +116,7 @@ class CupmonteGame extends GameRenderer {
         cup3.width = 268;
         cup3.height = 257;
         cup3.position = 2;
+        cup3.index = 2;
         cup3.image = cupImage;
 
         this.cups.push(cup1);
@@ -136,20 +144,9 @@ class CupmonteGame extends GameRenderer {
         else 
         {
             // 최종 확인 장면 그리기
-
-            // 꽝
-            if (this.failed)
-            {
-                c.save();
-                c.translate(30,120);
-                c.drawImage(this.cup_missImage.Image,slot[this.openItemIndex].x,slot[this.openItemIndex].y);
-                c.restore();
-            }
-            else{
-                c.font = "bold 38px Nanum Gothic"
-                c.fillStyle ="black";
-                GameUtil.drawTextAlign(c,this.finishMessage,0,this.width,400,"center");
-            }
+            c.font = "bold 38px Nanum Gothic"
+            c.fillStyle ="black";
+            GameUtil.drawTextAlign(c,this.finishMessage,0,this.width,400,"center");
         }
 
         // cup draw
@@ -207,10 +204,10 @@ class CupmonteGame extends GameRenderer {
         }
     }
 
-    public setItem(failed :boolean, message : string)
+    public setItem(index)
     {
-        this.failed = failed;
-        this.finishMessage = message;
+        index = index ||  GameUtil.randomInt(3);
+        this.finishMessage = this.items[index];;
     }
 
     /**
@@ -420,7 +417,7 @@ class CupItem implements RenderObject{
      */
     actionCollection : Array<Action> = new Array<Action>();
     image : ImageObject = undefined;
-
+    index = 0;
     onClick (evt : MouseEvent , el : CupItem) {}
 
     update(delayTime:number)
