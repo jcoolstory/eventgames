@@ -64,6 +64,8 @@ class CupmonteGame extends GameRenderer {
 
     private items = [];
 
+    private selectIndex = -1;
+
     public init(config: Object) : boolean
     {
         super.init(config);
@@ -207,6 +209,7 @@ class CupmonteGame extends GameRenderer {
     public setItem(index)
     {
         index = index ||  GameUtil.randomInt(3);
+        this.selectIndex = index;
         this.finishMessage = this.items[index];;
     }
 
@@ -321,7 +324,7 @@ class CupmonteGame extends GameRenderer {
                     el.doOpen();
                     this.openItemIndex = el.position;
                     this.status = CupmonteGameStatus.finish;
-                    this.onEnd(this.finishMessage);
+                    this.onEnd(this.selectIndex,this.items);
                     this.canvas.style.cursor = "default";
                     this.stop();
                     break;

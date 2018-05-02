@@ -204,7 +204,7 @@ class DiceGame extends GameRenderer {
         this.diceAnimationImage.stop();
 
         if (this.onEnd)
-            this.onEnd();
+            this.onEnd(index, this.items);
 
         this.status = DiceGameStatus.finish;
     }
