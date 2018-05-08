@@ -532,11 +532,11 @@ class CircleButton implements ClickObject, RenderObject
 class AnimateImageObject extends ImageObject
 {
     public currentIndex :number =0;
-    private rects : Rect[] = []
+    protected rects : Rect[] = []
     private size : Point = undefined;
     private animateTime : number = 1;
     private durtime = 0;
-    private frame = 1;
+    protected frame = 1;
     private loop : boolean = false;
     private isStart = false;
     constructor(url:string, size: Point, loop:boolean , animateTime : number = 1){

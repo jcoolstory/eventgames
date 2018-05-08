@@ -1,3 +1,24 @@
+class VAnimateImageObject extends  AnimateImageObject {
+
+    onLoad : Function= ()=>{};
+    constructor(url:string, size: Point, loop:boolean , animateTime : number = 1, rects: Rect[] ) {
+
+        super(url,size,loop,animateTime);
+        this.rects = rects;
+    }
+    public Load(url : string){
+        var _t = this;
+        this.Image = new Image();
+        this.Image.width
+        this.Image.src = url;
+        this.Image.onload = function() {
+            _t.loaded= true;
+            _t.frame = _t.rects.length;
+        };
+    }
+}
+
+
 class DiceGame extends GameRenderer {
 
     private status : DiceGameStatus = DiceGameStatus.ready;
@@ -33,11 +54,17 @@ class DiceGame extends GameRenderer {
         this.isStart = this.getParameter(config,"isStart", this.isStart);
         var imgUrlPrefix = "./img";
         imgUrlPrefix = this.getParameter(config,"imageurl", imgUrlPrefix);
-        this.diceAnimationImage = new AnimateImageObject(imgUrlPrefix + "diceanimation.png", {x:500,y:500}, true, 0.5);
+        var rects: Rect[] = [];
+        var imageWidth = 500;
+        for ( var i = 0 ; i < 18 ; i ++) {
+            rects.push({x:imageWidth * (i+ 1), y:0, width:imageWidth, height:imageWidth})
+        }
+        this.diceAnimationImage = new VAnimateImageObject(imgUrlPrefix + "diceanimation.png",
+            {x:imageWidth,y:imageWidth}, true, 1, rects);
         this.diceFinishImage = new ImageObject(imgUrlPrefix + "dice_finish.png");
 
         // defulat items
-        const defaultItem = 
+        const defaultItem =
         [
             {"title":"적립금 10,000P",         "bgColor" : "blue"},
             {"title":"할인쿠폰 3,000원",       "bgColor" : "#f07c25"},
@@ -74,40 +101,41 @@ class DiceGame extends GameRenderer {
     private drawGame(c:GameCanvas) {
         if (this.diceAnimationImage.loaded)
         {
+            var width = 330;
             switch (this.status)
             {
                 case DiceGameStatus.ready:
-                
+                    var rect =  {x:0, y: 0, width : 500, height : 500}
+                    c.save();
+                    
+                    c.translate(this.width/2, 20+width/2);
+                    c.drawImage(this.diceAnimationImage.Image,rect.x, rect.y,rect.width,rect.height, - width/2,-width/2,width,width);
+                    
+                    c.restore();
+                    break;
                 case DiceGameStatus.roll:
                     // animate
                     var rect =  this.diceAnimationImage.getCurrentImage();
-                    var width = 350;
                     c.save();
                     
                     c.translate(this.width/2, 20+width/2)
-                    // c.rotate(this.angle);
                     c.drawImage(this.diceAnimationImage.Image,rect.x, rect.y,rect.width,rect.height, - width/2,-width/2,width,width);
                     c.restore();
-                    // if (this.status == DiceGameStatus.roll)
-                    // this.angle += 0.05101;
+
+                    this.drawItems(c);
                     break;
                 case DiceGameStatus.finish:
-                // 당첨문구 그리기
-                    var width = 350;
+                    // 당첨문구 그리기
+                    var rect =  this.diceAnimationImage.getCurrentImage();
                     c.save();
-                    c.translate(this.width/2, 20+width/2)
-                    c.drawImage(this.diceFinishImage.Image, - width/2,-width/2,width,width);
                     
-                    c.font ="28px Nanum Ghothic"
-                    var region = {x:-90,y: -100,width:180, height:200}
-                    c.fillStyle = "white"
-                    GameUtil.drawTextRegion(c,this.items[this.selectIndex].title, region,"center","middle", 36);
+                    c.translate(this.width/2, 20+width/2);
+                    c.drawImage(this.diceAnimationImage.Image,rect.x, rect.y,rect.width,rect.height, - width/2,-width/2,width,width);
                     c.restore();
+                    this.drawItems(c);
                     break;
             }
-            
         }
-
 
         if ( this.status == DiceGameStatus.ready)
         {
@@ -125,10 +153,10 @@ class DiceGame extends GameRenderer {
             else
             {
                 c.fillStyle = "#535353";
-                c.font = "bold 28px Nanum Gothic"
+                c.font = "bold 28px Nanum Gothic";
                 c.fillText("이벤트 참여를 원하시면, 로그인을 해주세요",270,430);
-                c.font = "bold 30px Nanum Gothic"
-                c.fillStyle = "#25284b"
+                c.font = "bold 30px Nanum Gothic";
+                c.fillStyle = "#25284b";
                 GameUtil.roundRect(c,350,480,300,80,35,true,false);
                 c.fillStyle = "white";
                 c.fillText("LOGIN",450,530);
@@ -136,15 +164,45 @@ class DiceGame extends GameRenderer {
         }
     }
 
+    private drawItems(c:GameCanvas) {
+        c.save();
+        var horizontalBarMargin = this.width / 7;
+        c.translate(horizontalBarMargin,400);
+        c.font = "bold 25px Nanum Gothic";
+        c.fillStyle = "#25284b";
+        var region = {x:-60,y:-40,width:120,height:100};
+        let width = 50;
+        for(var i = 0 ; i < 6 ; i++)
+        {
+            c.fillStyle = this.items[i].color;
+            var rect = this.diceAnimationImage.getImageRect(i * 3);
+            c.drawImage(this.diceAnimationImage.Image,rect.x, rect.y,rect.width,rect.height, - width/2,-width/2,width,width);
+            c.save();
+            c.translate(0,80);
+            if (this.items[i].title)
+            {
+                GameUtil.drawTextRegion(c,this.items[i].title, region,"center","top", 36);
+            }
+            c.restore();
+            c.translate(horizontalBarMargin,0);
+        }
+        c.restore();
+    }
     public update(delayTime){
         switch(this.status)
         {
             case DiceGameStatus.roll:
-            this.diceAnimationImage.update(delayTime);
-            break;
+                this.diceAnimationImage.update(delayTime);
+                if ( this.selectIndex >= 0 && this.diceAnimationImage.currentIndex / 3 === this.selectIndex) {
+                    this.status = DiceGameStatus.finish;
+                    
+                if (this.onEnd)
+                    this.onEnd(this.selectIndex, this.items);
+                }
+                break;
             case DiceGameStatus.finish:
-            this.stop();
-            break;
+                this.stop();
+                break;
         }
     }
 
@@ -201,12 +259,7 @@ class DiceGame extends GameRenderer {
     public setIndex(index:number)
     {
         this.selectIndex = index;
-        this.diceAnimationImage.stop();
 
-        if (this.onEnd)
-            this.onEnd(index, this.items);
-
-        this.status = DiceGameStatus.finish;
     }
 }
 
