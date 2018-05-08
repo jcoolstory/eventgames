@@ -45,6 +45,8 @@ class DiceGame extends GameRenderer {
 
     private selectIndex = -1;
     
+    private diceFrameCount = 36;
+
     public init(config: Object) : boolean
     {
         super.init(config);
@@ -56,11 +58,11 @@ class DiceGame extends GameRenderer {
         imgUrlPrefix = this.getParameter(config,"imageurl", imgUrlPrefix);
         var rects: Rect[] = [];
         var imageWidth = 500;
-        for ( var i = 0 ; i < 18 ; i ++) {
+        for ( var i = 0 ; i < this.diceFrameCount ; i ++) {
             rects.push({x:imageWidth * (i+ 1), y:0, width:imageWidth, height:imageWidth})
         }
         this.diceAnimationImage = new VAnimateImageObject(imgUrlPrefix + "diceanimation.png",
-            {x:imageWidth,y:imageWidth}, true, 1, rects);
+            {x:imageWidth,y:imageWidth}, true, 1.5, rects);
         this.diceFinishImage = new ImageObject(imgUrlPrefix + "dice_finish.png");
 
         // defulat items
@@ -109,9 +111,10 @@ class DiceGame extends GameRenderer {
                     c.save();
                     
                     c.translate(this.width/2, 20+width/2);
-                    c.drawImage(this.diceAnimationImage.Image,rect.x, rect.y,rect.width,rect.height, - width/2,-width/2,width,width);
+                    c.drawImage(this.diceAnimationImage.Image,rect.x, rect.y,rect.width,rect.height, - width/2, -width/2, width, width);
                     
                     c.restore();
+                    
                     break;
                 case DiceGameStatus.roll:
                     // animate
@@ -119,7 +122,7 @@ class DiceGame extends GameRenderer {
                     c.save();
                     
                     c.translate(this.width/2, 20+width/2)
-                    c.drawImage(this.diceAnimationImage.Image,rect.x, rect.y,rect.width,rect.height, - width/2,-width/2,width,width);
+                    c.drawImage(this.diceAnimationImage.Image,rect.x, rect.y,rect.width,rect.height, - width/2, -width/2, width, width);
                     c.restore();
 
                     this.drawItems(c);
@@ -130,7 +133,7 @@ class DiceGame extends GameRenderer {
                     c.save();
                     
                     c.translate(this.width/2, 20+width/2);
-                    c.drawImage(this.diceAnimationImage.Image,rect.x, rect.y,rect.width,rect.height, - width/2,-width/2,width,width);
+                    c.drawImage(this.diceAnimationImage.Image,rect.x, rect.y,rect.width,rect.height, - width/2, -width/2, width, width);
                     c.restore();
                     this.drawItems(c);
                     break;
@@ -146,7 +149,7 @@ class DiceGame extends GameRenderer {
                 c.fillText("버튼을 눌러 주사위를 굴려주세요",300,430);
                 c.font = "bold 30px Nanum Gothic"
                 c.fillStyle = "#25284b"
-                GameUtil.roundRect(c,350,480,300,80,35,true,false);
+                GameUtil.roundRect(c,355,480,300,80,35,true,false);
                 c.fillStyle = "white";
                 c.fillText("주사위 던지기 ",410,530);
             }
@@ -154,12 +157,12 @@ class DiceGame extends GameRenderer {
             {
                 c.fillStyle = "#535353";
                 c.font = "bold 28px Nanum Gothic";
-                c.fillText("이벤트 참여를 원하시면, 로그인을 해주세요",270,430);
+                c.fillText("이벤트 참여를 원하시면, 로그인을 해주세요",265,430);
                 c.font = "bold 30px Nanum Gothic";
                 c.fillStyle = "#25284b";
-                GameUtil.roundRect(c,350,480,300,80,35,true,false);
+                GameUtil.roundRect(c,355,480,300,80,35,true,false);
                 c.fillStyle = "white";
-                c.fillText("LOGIN",450,530);
+                c.fillText("LOGIN",455,530);
             }
         }
     }
@@ -171,11 +174,11 @@ class DiceGame extends GameRenderer {
         c.font = "bold 25px Nanum Gothic";
         c.fillStyle = "#25284b";
         var region = {x:-60,y:-40,width:120,height:100};
-        let width = 50;
+        let width = 80;
         for(var i = 0 ; i < 6 ; i++)
         {
             c.fillStyle = this.items[i].color;
-            var rect = this.diceAnimationImage.getImageRect(i * 3);
+            var rect = this.diceAnimationImage.getImageRect(i * this.diceFrameCount/6);
             c.drawImage(this.diceAnimationImage.Image,rect.x, rect.y,rect.width,rect.height, - width/2,-width/2,width,width);
             c.save();
             c.translate(0,80);
@@ -193,7 +196,7 @@ class DiceGame extends GameRenderer {
         {
             case DiceGameStatus.roll:
                 this.diceAnimationImage.update(delayTime);
-                if ( this.selectIndex >= 0 && this.diceAnimationImage.currentIndex / 3 === this.selectIndex) {
+                if ( this.selectIndex >= 0 && this.diceAnimationImage.currentIndex / (this.diceFrameCount/6) === this.selectIndex) {
                     this.status = DiceGameStatus.finish;
                     
                 if (this.onEnd)
