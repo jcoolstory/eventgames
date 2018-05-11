@@ -1,6 +1,6 @@
 var slot :Array<Point> = [ { x:80, y:50} , {x:360, y:50},{x:640, y:50}];
 
-class StartButton {
+class DiceStartButton {
     enable : boolean = true;
     bounds : Rect = undefined;
 }
@@ -27,7 +27,7 @@ class CupmonteGame extends GameRenderer {
     /**
      * 시작버튼
      */
-    startButton  = new StartButton();
+    startButton  = new DiceStartButton();
     /**
      * 꽝 이미지 리소스
      */

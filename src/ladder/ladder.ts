@@ -2,7 +2,7 @@
 enum LadderGameStatus{
     prepare, ready, pathdraw , finished
 }
-class StartButton extends Button
+class LadderStartButton extends Button
 {
     isOver : boolean = false;
 }
@@ -28,7 +28,7 @@ class LadderGame  extends GameRenderer {
     private pathVelocity = 300;
     private receiveIndex = -1;
     private debug = false;
-    private startButton : StartButton;
+    private startButton : LadderStartButton;
     /**
      *  start event (start button click ) 
      */
@@ -94,7 +94,7 @@ class LadderGame  extends GameRenderer {
             };
             this.buttons.push(button);
         }
-        var startButton = new StartButton();
+        var startButton = new LadderStartButton();
         startButton.id = 100, 
         startButton.x = 330, 
         startButton.y = 350;
