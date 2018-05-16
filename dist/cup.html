@@ -40,9 +40,9 @@
         }
     })
     function receiveIndex(){
-        
-        console.log("receive ");
-        cupGame.setItem(0);
+        var index = parseInt(Math.random() * 3);
+        console.log("receive ", index);
+        cupGame.setIndex(index);
     }
     cupGame.onLogin= function(){
         console.log("login")

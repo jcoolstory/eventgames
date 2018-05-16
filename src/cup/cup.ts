@@ -85,7 +85,6 @@ class CupmonteGame extends GameRenderer {
         var cupImage = new ImageObject(imgUrlPrefix + "cup_image.png");
         this.cup_missImage = new ImageObject(imgUrlPrefix + "cup_missicon.png");
         
-        console.log(this.items)
         this.renderCollection.push({
             update: ()=>{
 
@@ -206,9 +205,8 @@ class CupmonteGame extends GameRenderer {
         }
     }
 
-    public setItem(index)
+    public setIndex(index)
     {
-        index = index ||  GameUtil.randomInt(3);
         this.selectIndex = index;
         this.finishMessage = this.items[index];;
     }
