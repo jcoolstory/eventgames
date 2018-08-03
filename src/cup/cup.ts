@@ -45,6 +45,11 @@ class CupmonteGame extends GameRenderer {
      * 게임 시작 여부
      */
     isStart = false;
+
+    /**
+     * 이벤트 만료 여부
+     */
+    finishedEvent = false;
     
     //#region events
     /**
@@ -75,12 +80,16 @@ class CupmonteGame extends GameRenderer {
         this.onEnd = this.getParameter(config, "onEnd", this.onEnd);
         imgUrlPrefix = this.getParameter(config,"imageurl", imgUrlPrefix);
         this.isStart = this.getParameter(config, "isStart", true); 
-        
+        this.finishedEvent = this.getParameter(config, "finishedEvent", false);
+        if (this.finishedEvent) {
+            this.status = CupmonteGameStatus.finish;
+        }
         var defaultItem = [
             "꽝!",
             "적립금 10,000P",
             "할인쿠폰 3,000원",
-    ]
+        ];
+
         this.items = this.getParameter(config,"items", defaultItem);        
         var cupImage = new ImageObject(imgUrlPrefix + "cup_image.png");
         this.cup_missImage = new ImageObject(imgUrlPrefix + "cup_missicon.png");
@@ -142,12 +151,16 @@ class CupmonteGame extends GameRenderer {
             // 시작버튼 및 알림문구 그리기
             this.drawPopup(c);
         }
-        else 
+        else if (this.status == CupmonteGameStatus.finish)
         {
-            // 최종 확인 장면 그리기
-            c.font = "bold 38px Nanum Gothic"
-            c.fillStyle ="black";
-            GameUtil.drawTextAlign(c,this.finishMessage,0,this.width,400,"center");
+            if (!this.finishedEvent) {            
+            
+                // 최종 확인 장면 그리기
+                c.font = "bold 38px Nanum Gothic"
+                c.fillStyle ="black";
+                GameUtil.drawTextAlign(c,this.finishMessage,0,this.width,400,"center");
+            }
+            
         }
 
         // cup draw

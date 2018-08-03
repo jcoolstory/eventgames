@@ -5,3 +5,5 @@ test.html
 release/
 node_modules/
 *.map
+/.idea/
+/.vscode/

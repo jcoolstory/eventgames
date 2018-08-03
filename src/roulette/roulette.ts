@@ -32,6 +32,8 @@ class RouletteGame  extends GameRenderer {
     private isStart =false;
     //#endregion
     
+    private finishedEvent = false;
+
     //#region select item
     /**
      * 
@@ -105,6 +107,10 @@ class RouletteGame  extends GameRenderer {
         startButtonOffUrl = this.getParameter(config, "buttonoff", startButtonOffUrl)
         loginButtonUrl =  this.getParameter(config,"buttonlogin",loginButtonUrl )
         this.isStart = this.getParameter(config, "isStart", this.isStart);
+        this.finishedEvent = this.getParameter(config, "finishedEvent", false);
+        if (this.finishedEvent) {
+            this.status = RouletteGameStatus.finished;
+        }
 
         // image resouce init
         var rouletteBase = new ImageObject(imgUrlPrefix +"roulette_base.png");
@@ -171,7 +177,10 @@ class RouletteGame  extends GameRenderer {
                     c.drawImage(startButtonEmpty.Image,-145,-145,290,290);            
             }
             else {
-                c.drawImage(loginImage.Image,-145,-145,290,290);            
+                if (this.finishedEvent)
+                    c.drawImage(startButtonEmpty.Image,-145,-145,290,290);            
+                else
+                    c.drawImage(loginImage.Image,-145,-145,290,290);
             }
                 
             c.restore();

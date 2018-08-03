@@ -43,6 +43,7 @@ class LadderGame  extends GameRenderer {
     public onLogin : Function = ()=>{};
     private items : Array<any> = undefined;
     private isStart = true;
+    private finishedEvent = false;
     private checkedIcon : ImageObject;
     public init(config: Object) : boolean
     {
@@ -66,6 +67,7 @@ class LadderGame  extends GameRenderer {
         this.onEnd = this.getParameter(config, "onEnd", this.onEnd);
         imgUrlPrefix = this.getParameter(config,"imageurl", imgUrlPrefix);
         this.isStart = this.getParameter(config, "isStart", isStart); 
+        this.finishedEvent = this.getParameter(config, "finishedEvent", false);
         this.horizontalBar = this.items.length;
         
         this.checkedIcon = new ImageObject(imgUrlPrefix +"ladder_checked.png");
@@ -171,6 +173,8 @@ class LadderGame  extends GameRenderer {
 
     private drawReadyPopup(c:GameCanvas)
     {
+        if (this.finishedEvent)
+            return;
         if (this.debug)
             return;
         

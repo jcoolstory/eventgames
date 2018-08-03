@@ -39,6 +39,8 @@ class DiceGame extends GameRenderer {
 
     private isStart : boolean = true;
 
+    private finishedEvent : boolean = false;
+
     private angle = 0;
 
     private items : any = undefined;
@@ -56,6 +58,10 @@ class DiceGame extends GameRenderer {
         this.isStart = this.getParameter(config,"isStart", this.isStart);
         var imgUrlPrefix = "./img";
         imgUrlPrefix = this.getParameter(config,"imageurl", imgUrlPrefix);
+        this.finishedEvent = this.getParameter(config, "finishedEvent", false);
+        if (this.finishedEvent) {
+            // this.status = DiceGameStatus.finish;
+        }
         var rects: Rect[] = [];
         var imageWidth = 500;
         for ( var i = 0 ; i < this.diceFrameCount ; i ++) {
@@ -127,7 +133,8 @@ class DiceGame extends GameRenderer {
 
                     this.drawItems(c);
                     break;
-                case DiceGameStatus.finish:
+                case DiceGameStatus.finish:                    
+                
                     // 당첨문구 그리기
                     var rect =  this.diceAnimationImage.getCurrentImage();
                     c.save();
@@ -142,6 +149,8 @@ class DiceGame extends GameRenderer {
 
         if ( this.status == DiceGameStatus.ready)
         {
+            if (this.finishedEvent)
+                return;
             if (this.isStart)
             { 
                 c.fillStyle = "#535353";
