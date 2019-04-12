@@ -107,6 +107,7 @@ class DiceGame extends GameRenderer {
     }
 
     private drawGame(c:GameCanvas) {
+        console.log("canvas")
         if (this.diceAnimationImage.loaded)
         {
             var width = 330;
